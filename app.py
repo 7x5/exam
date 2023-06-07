@@ -1,7 +1,7 @@
 from flask import *
 import hashlib
 import sqlite3
-import datetime
+from datetime import datetime
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = 'your_secret_key'
@@ -74,7 +74,7 @@ def problemer():
 
             con = sqlite3.connect('database.db')
             c = con.cursor()
-            c.execute("INSERT INTO problemer (helenavn, telenr, time, body, kort_bes, status) VALUES (?, ?, ?, ?, ?, ?)", (navn, telenr, datetime.datetime.now(), langbes, kortbes, 'Uløst'))
+            c.execute("INSERT INTO problemer (helenavn, telenr, time, body, kort_bes, status) VALUES (?, ?, ?, ?, ?, ?)", (navn, telenr, datetime.now(), langbes, kortbes, 'Uløst'))
             con.commit()
             con.close()
         username = session['username']
@@ -84,13 +84,34 @@ def problemer():
     else:
         return redirect(url_for('login'))
 
-@app.route('/arbeid')
-def arbeid():
+@app.route('/ulost')
+def ulost():
     if 'admin' in session and session['admin']:
+        con = sqlite3.connect('database.db')
+        c = con.cursor()
+        c.execute("SELECT * FROM problemer WHERE status = 'Uløst'")
+        problems = c.fetchall()
+        con.close()
+
         username = session['username']
         admin = session['admin']
         logged_in = session['logged_in']
-        return render_template('arbeid.html', username=username, admin=admin, logged_in=logged_in)
+        return render_template('ulost.html', username=username, admin=admin, logged_in=logged_in, problems=problems)
+    
+@app.route('/arbeid', methods=['POST'])
+def arbeid():
+    if 'admin' in session and session['admin']:
+        problem_id = request.form['problem_id']
+        bruker = session['username']
+
+        con = sqlite3.connect('database.db')
+        c = con.cursor()
+        c.execute("INSERT INTO arbeid (problem_id, person, time) VALUES (?, ?, ?)", (problem_id, bruker, datetime.now()))
+        c.execute("UPDATE problemer SET status = 'Under arbeid' WHERE problem_id = ?", (problem_id))
+        con.commit()
+        con.close()
+
+        return redirect(url_for('ulost'))
 
 @app.route("/logout", methods=['POST'])
 def logout():

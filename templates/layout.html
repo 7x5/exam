@@ -22,7 +22,10 @@
           <a href="/">Hjem</a>
           <a href="/problemer">Hengvlser</a>
           {% if admin %}
-          <a href="/arbeid">Arbeid</a>
+          <a href="/ulost">Uløst</a>
+          {% endif %}
+          {% if admin %}
+          <a href="/ulost">Under arbeid</a>
           {% endif %}
       </nav>
     {% endif %}

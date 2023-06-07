@@ -1,7 +1,7 @@
 from flask import *
 import hashlib
 import sqlite3
-from datetime import datetime
+import datetime
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = 'your_secret_key'
@@ -74,7 +74,7 @@ def problemer():
 
             con = sqlite3.connect('database.db')
             c = con.cursor()
-            c.execute("INSERT INTO problemer (helenavn, telenr, time, body, kort_bes, status) VALUES (?, ?, ?, ?, ?, ?)", (navn, telenr, datetime.now(), langbes, kortbes, 'Uløst'))
+            c.execute("INSERT INTO problemer (helenavn, telenr, time, body, kort_bes, status) VALUES (?, ?, ?, ?, ?, ?)", (navn, telenr, datetime.datetime.now(), langbes, kortbes, 'Uløst'))
             con.commit()
             con.close()
         username = session['username']
@@ -106,12 +106,40 @@ def arbeid():
 
         con = sqlite3.connect('database.db')
         c = con.cursor()
-        c.execute("INSERT INTO arbeid (problem_id, person, time) VALUES (?, ?, ?)", (problem_id, bruker, datetime.now()))
+        c.execute("INSERT INTO arbeid (problem_id, person, time) VALUES (?, ?, ?)", (problem_id, bruker, datetime.datetime.now()))
         c.execute("UPDATE problemer SET status = 'Under arbeid' WHERE problem_id = ?", (problem_id))
         con.commit()
         con.close()
 
         return redirect(url_for('ulost'))
+    
+@app.route('/underarbeid')
+def underarbeid():
+    if 'admin' in session and session['admin']:
+        con = sqlite3.connect('database.db')
+        c = con.cursor()
+        c.execute("SELECT * FROM problemer WHERE status = 'Under arbeid'")
+        under = c.fetchall()
+        con.close()
+
+        time = []
+        if under:
+            con = sqlite3.connect('database.db')
+            c = con.cursor()
+            c.execute("SELECT time FROM arbeid WHERE problem_id = ?", (under[0][0],))
+            time = c.fetchone()
+            con.close()
+
+            
+            time_str = time[0]
+            time_obj = datetime.datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S.%f')
+            formatted_time = time_obj.strftime('%d-%m-%Y %H:%M:%S')
+            time = formatted_time
+
+        username = session['username']
+        admin = session['admin']
+        logged_in = session['logged_in']
+        return render_template('underarbeid.html', username=username, admin=admin, logged_in=logged_in, under=under, time=time)
 
 @app.route("/logout", methods=['POST'])
 def logout():

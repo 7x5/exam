@@ -1,0 +1,12 @@
+{%extends "layout.html"%}
+{%block content%}
+<h3>Henvendelser under arbeid</h3>
+
+{% for under in under %}
+<details>
+	<summary>{{under[1]}}'s henvendelse. "{{under[6]}}"</summary>
+	<p>{{under[3]}}</p>
+    <p>Starta {{ time }}</p>
+</details>
+{% endfor %}
+{%endblock%}

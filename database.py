@@ -3,7 +3,7 @@ import sqlite3
 con = sqlite3.connect("database.db")
 cur = con.cursor()
 
-# Create the "problemer" table
+
 cur.execute("""CREATE TABLE IF NOT EXISTS problemer (
                 problem_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 helenavn TEXT,
@@ -13,7 +13,7 @@ cur.execute("""CREATE TABLE IF NOT EXISTS problemer (
                 status TEXT
               );""")
 
-# Create the "arbeid" table
+
 cur.execute("""CREATE TABLE IF NOT EXISTS arbeid (
                 arbeid_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 person TEXT,

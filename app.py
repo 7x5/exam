@@ -1,6 +1,7 @@
 from flask import *
 import hashlib
 import sqlite3
+import datetime
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = 'your_secret_key'
@@ -8,7 +9,8 @@ app.secret_key = 'your_secret_key'
 @app.route("/")
 def index():
     if 'logged_in' in session and session['logged_in']:
-        return render_template('index.html')
+        username = session['username']  # Retrieve the username from the session
+        return render_template('index.html', username=username)
     else:
         return redirect(url_for('login'))
     
@@ -28,7 +30,10 @@ def login():
             lagret_passord = admin[2]
             hashed_passord = hashlib.sha256(passord.encode()).hexdigest()
             if lagret_passord == hashed_passord:
+                session['username'] = brukernavn
                 session['logged_in'] = True
+                if admin[3] == 1:
+                    session['admin'] = True
                 return redirect(url_for('index')) 
             
         return 'Invaild password or username'
@@ -52,7 +57,31 @@ def register():
     
     return render_template('register.html')
 
+@app.route("/problemer", methods=['GET', 'POST'])
+def problemer():
+    if 'logged_in' in session and session['logged_in']:
+        if request.method == 'POST':
+            navn = request.form['helenavn']
+            telenr = request.form['telenr']
+            kortbes = request.form['kortbes']
+            langbes = request.form['langbes']
+
+            con = sqlite3.connect('database.db')
+            c = con.cursor()
+            c.execute("INSERT INTO problemer (helenavn, telenr, time, body, kort_bes, status) VALUES (?, ?, ?, ?, ?, ?)", (navn, telenr, datetime.datetime.now(), langbes, kortbes, 'Uløst'))
+            con.commit()
+            con.close()
+        username = session['username']
+        return render_template('lag-henved.html', username=username)
+    else:
+        return redirect(url_for('login'))
     
+@app.route("/logout", methods=['POST'])
+def logout():
+    # Remove the session data for the logged-in user
+    session.pop('logged_in', None)
+    session.pop('username', None)
+    return redirect(url_for('login'))
     
 
 app.run(host="0.0.0.0", port=5001, debug=True)

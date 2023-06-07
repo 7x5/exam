@@ -9,10 +9,16 @@
 <body>
   <header>
     <h1>Hello, world</h1>
-    <p>Welcome to my website!</p>
+    {% if username %}
+    <span>Welcome, {{ username }} | </span>
+    <a href="{{ url_for('logout') }}">Log Out</a>
+
+    {% endif %}
+
     <nav>
-        <a href="henveldseler">Hengvlser</a>
-        <a href="blog">BLog</a>
+        <a href="/">Hjem</a>
+        <a href="/problemer">Hengvlser</a>
+        {% if %}
     </nav>
   </header>
 
@@ -23,7 +29,7 @@
   </main>
 
   <footer>
-    <p>Jane Smith's website.</p>
+    <p>Helpdesk.</p>
   </footer>
 </body>
 </html>

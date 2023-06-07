@@ -11,7 +11,7 @@
     <h1>Helpdesk</h1>
     {% if logged_in %}
       {% if username %}
-      <span>Welcome, {{ username }} | </span>
+      <span>Velkommen, {{ username }} </span>
       <form action="{{ url_for('logout') }}" method="post">
         <button type="submit" class="link-button">Log Out</button>
       </form>
@@ -20,7 +20,7 @@
     
       <nav>
           <a href="/">Hjem</a>
-          <a href="/problemer">Hengvlser</a>
+          <a href="/problemer">Lag en henvendelse</a>
           {% if admin %}
           <a href="/ulost">Uløst</a>
           {% endif %}
@@ -38,7 +38,7 @@
   </main>
 
   <footer>
-    <p>Helpdesk.</p>
+    <p>Helpdesk.©</p>
   </footer>
 </body>
 </html>

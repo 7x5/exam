@@ -8,18 +8,24 @@
 </head>
 <body>
   <header>
-    <h1>Hello, world</h1>
-    {% if username %}
-    <span>Welcome, {{ username }} | </span>
-    <a href="{{ url_for('logout') }}">Log Out</a>
-
+    <h1>Helpdesk</h1>
+    {% if logged_in %}
+      {% if username %}
+      <span>Welcome, {{ username }} | </span>
+      <form action="{{ url_for('logout') }}" method="post">
+        <button type="submit" class="link-button">Log Out</button>
+      </form>
+    
+      {% endif %}
+    
+      <nav>
+          <a href="/">Hjem</a>
+          <a href="/problemer">Hengvlser</a>
+          {% if admin %}
+          <a href="/arbeid">Arbeid</a>
+          {% endif %}
+      </nav>
     {% endif %}
-
-    <nav>
-        <a href="/">Hjem</a>
-        <a href="/problemer">Hengvlser</a>
-        {% if %}
-    </nav>
   </header>
 
   <main>

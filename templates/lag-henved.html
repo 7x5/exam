@@ -2,9 +2,9 @@
 {%block content%}
 <h3>Lag en henvendelse</h3>
 <form action="{{ url_for('problemer') }}" method="post">
-        <label for="brukernavn">Kort beskrivende tekst om problmete ditt:</label>
+        <label for="brukernavn">En kort oppsumering tekst om problemet ditt (Max 20 ord):</label>
         <input type="text" name="kortbes" required>
-        <label for="brukernavn">Selve beskrivelsen om problmet ditt:</label>
+        <label for="brukernavn">Lengre beskrivelsen om problemet ditt:</label>
         <textarea name="langbes" rows="5" cols="80"></textarea>
         
         

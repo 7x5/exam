@@ -5,8 +5,14 @@
 {% for under in under %}
 <details>
 	<summary>{{under[1]}}'s henvendelse. "{{under[6]}}"</summary>
+	<address>
+		Av: {{under[1]}} <br>
+		Telefonnr: {{under[2]}} <br>
+		E-post: {{under[7]}} <br>
+		Starta: {{time}}
+		<hr>
+	</address>
 	<p>{{under[3]}}</p>
-    <p>Starta {{ time }}</p>
 </details>
 {% endfor %}
 {%endblock%}

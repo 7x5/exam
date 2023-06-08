@@ -19,12 +19,12 @@ def index():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        brukernavn = request.form['brukernavn']
+        email = request.form['email']
         passord = request.form['passord']
 
-        con = sqlite3.connect('database.db')
+        con = sqlite3.connect('database.db', check_same_thread=False, uri=True)
         c = con.cursor()
-        c.execute("SELECT * FROM brukere WHERE brukernavn=?", (brukernavn,))
+        c.execute("SELECT * FROM brukere WHERE email=?", (email,))
         user = c.fetchone()
         con.close()
 
@@ -33,10 +33,11 @@ def login():
             lagret_passord = user[3]
             hashed_passord = hashlib.sha256(passord.encode()).hexdigest()
             if lagret_passord == hashed_passord:
-                session['username'] = brukernavn
+                session['username'] = user[1]
                 session['logged_in'] = True
                 session['admin'] = bool(user[4])
                 session['telenr'] = user[2]
+                session['email'] = email
                 return redirect(url_for('index'))
 
         return 'Invalid password or username'
@@ -49,12 +50,13 @@ def register():
         brukernavn = request.form['brukernavn']
         passord = request.form['passord']
         telenr = request.form['telenr']
+        email = request.form['email']
 
         hashed_passord = hashlib.sha256(passord.encode()).hexdigest()
 
         con = sqlite3.connect('database.db', check_same_thread=False, uri=True)
         c = con.cursor()
-        c.execute("INSERT INTO brukere (brukernavn, passord, admin, telenr) VALUES (?, ?, ?, ?)", (brukernavn, hashed_passord, 0, telenr))
+        c.execute("INSERT INTO brukere (brukernavn, passord, admin, telenr, email) VALUES (?, ?, ?, ?, ?)", (brukernavn, hashed_passord, 0, telenr, email))
         con.commit()
         con.close()
         session['username'] = brukernavn
@@ -71,10 +73,11 @@ def problemer():
             telenr = session['telenr']
             kortbes = request.form['kortbes']
             langbes = request.form['langbes']
+            email = session['email']
 
-            con = sqlite3.connect('database.db')
+            con = sqlite3.connect('database.db', check_same_thread=False, uri=True)
             c = con.cursor()
-            c.execute("INSERT INTO problemer (helenavn, telenr, time, body, kort_bes, status) VALUES (?, ?, ?, ?, ?, ?)", (navn, telenr, datetime.datetime.now(), langbes, kortbes, 'Uløst'))
+            c.execute("INSERT INTO problemer (helenavn, telenr, time, body, kort_bes, status, email) VALUES (?, ?, ?, ?, ?, ?, ?)", (navn, telenr, datetime.datetime.now(), langbes, kortbes, 'Uløst', email))
             con.commit()
             con.close()
         username = session['username']
@@ -87,7 +90,7 @@ def problemer():
 @app.route('/ulost')
 def ulost():
     if 'admin' in session and session['admin']:
-        con = sqlite3.connect('database.db')
+        con = sqlite3.connect('database.db', check_same_thread=False, uri=True)
         c = con.cursor()
         c.execute("SELECT * FROM problemer WHERE status = 'Uløst'")
         problems = c.fetchall()
@@ -104,10 +107,10 @@ def arbeid():
         problem_id = request.form['problem_id']
         bruker = session['username']
 
-        con = sqlite3.connect('database.db')
+        con = sqlite3.connect('database.db', check_same_thread=True, uri=True)
         c = con.cursor()
         c.execute("INSERT INTO arbeid (problem_id, person, time) VALUES (?, ?, ?)", (problem_id, bruker, datetime.datetime.now()))
-        c.execute("UPDATE problemer SET status = 'Under arbeid' WHERE problem_id = ?", (problem_id))
+        c.execute("UPDATE problemer SET status = 'Under arbeid' WHERE problem_id = ?", (problem_id,))
         con.commit()
         con.close()
 
@@ -116,7 +119,7 @@ def arbeid():
 @app.route('/underarbeid')
 def underarbeid():
     if 'admin' in session and session['admin']:
-        con = sqlite3.connect('database.db')
+        con = sqlite3.connect('database.db', check_same_thread=False, uri=True)
         c = con.cursor()
         c.execute("SELECT * FROM problemer WHERE status = 'Under arbeid'")
         under = c.fetchall()

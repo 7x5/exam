@@ -2,10 +2,11 @@
 {%block content%}
 <h3>Login</h3>
 <form action="login" method="post">
-        <label for="brukernavn">Brukernavn: </label>
-        <input type="text" name="brukernavn" required><br><br>
+        <label for="email">E-post: </label>
+        <input type="text" name="email" required><br><br>
         <label for="passord">Passord: </label>
         <input type="password" name="passord" required>
         <input type="submit" value="Login">
 </form>
+<p>Har du ikke bruker kan du registere <a href="/register">her</a> </p>
 {%endblock%}

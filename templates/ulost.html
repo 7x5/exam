@@ -5,6 +5,13 @@
 {% for problem in problems %}
 <details>
 	<summary>{{problem[1]}}'s henvendelse. "{{problem[6]}}"</summary>
+	<address>
+		Av: {{problem[1]}} <br>
+		Telefonnr: {{problem[2]}} <br>
+		E-post: {{problem[7]}} <br>
+		Send inn: {{problem[4]}}
+	</address>
+	<hr>
 	<p>{{problem[3]}}</p>
 	<form action="{{ url_for('arbeid')}}" method="POST">
 		<input type="hidden" name="problem_id" value="{{ problem[0] }}">

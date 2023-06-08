@@ -125,24 +125,30 @@ def underarbeid():
         under = c.fetchall()
         con.close()
 
-        time = []
+        arbeid_data = []
         if under:
             con = sqlite3.connect('database.db')
             c = con.cursor()
-            c.execute("SELECT time FROM arbeid WHERE problem_id = ?", (under[0][0],))
-            time = c.fetchone()
+            for problem in under:
+                problem_id = problem[0]
+                c.execute("SELECT problem_id, person, time FROM arbeid WHERE problem_id = ?", (problem_id,))
+                arbeid_row = c.fetchone()
+                if arbeid_row:
+                    person = arbeid_row[0]
+                    time = arbeid_row[1]
+                    problem_id = arbeid_row[2]
+                    arbeid_data.append((person, time, problem_id))
             con.close()
-
             
-            time_str = time[0]
-            time_obj = datetime.datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S.%f')
-            formatted_time = time_obj.strftime('%d-%m-%Y %H:%M:%S')
-            time = formatted_time
+            # time_str = time[0]
+            # time_obj = datetime.datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S.%f')
+            # formatted_time = time_obj.strftime('%d-%m-%Y %H:%M:%S')
+            # time = formatted_time
 
         username = session['username']
         admin = session['admin']
         logged_in = session['logged_in']
-        return render_template('underarbeid.html', username=username, admin=admin, logged_in=logged_in, under=under, time=time)
+        return render_template('underarbeid.html', username=username, admin=admin, logged_in=logged_in, under=under, arbeid_data=arbeid_data)
     
 @app.route('/dineproblemer')
 def dineproblemer():

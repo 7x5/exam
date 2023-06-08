@@ -9,7 +9,19 @@
 		Av: {{under[1]}} <br>
 		Telefonnr: {{under[2]}} <br>
 		E-post: {{under[7]}} <br>
-		Starta: {{time}}
+        Starta: 
+        {% for arbeid_row in arbeid_data %}
+            {% if arbeid_row[0] == under[0] %}
+                {{ arbeid_row[2] }}
+            {% endif %}
+        {% endfor %}
+        <br>
+        Admin som jobber på den: 
+        {% for arbeid_row in arbeid_data %}
+            {% if arbeid_row[0] == under[0] %}
+                {{ arbeid_row[1] }}
+            {% endif %}
+        {% endfor %}
 		<hr>
 	</address>
 	<p>{{under[3]}}</p>

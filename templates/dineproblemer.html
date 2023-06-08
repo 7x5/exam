@@ -1,19 +1,32 @@
-{%extends "layout.html"%}
-{%block content%}
+{% extends "layout.html" %}
+{% block content %}
 <h3>Dine henvendelser</h3>
 
 {% for problem in problems %}
 <details>
-	<summary>{{problem[1]}}'s henvendelse. "{{problem[6]}}"</summary>
-	<address>
-		Av: {{problem[1]}} <br>
-		Telefonnr: {{problem[2]}} <br>
-		E-post: {{problem[7]}} <br>
-		Send inn: {{problem[4]}} <br>
-		Status: <mark>{{problem[5]}}</mark>
-	</address>
-	<hr>
-	<p>{{problem[3]}}</p>
+    <summary>{{ problem[1] }}'s henvendelse. "{{ problem[6] }}"</summary>
+    <address>
+        Av: {{ problem[1] }} <br>
+        Telefonnr: {{ problem[2] }} <br>
+        E-post: {{ problem[7] }} <br>
+        Send inn: {{ problem[4] }} <br>
+        Status: <mark>{{ problem[5] }}</mark> <br>
+        Startet å jobbe på: 
+        {% for arbeid in arbeid_data %}
+            {% if arbeid[0] == problem[0] %}
+                {{ arbeid[2] }}
+            {% endif %}
+        {% endfor %}
+        <br>
+        Tekniker som jobber på den: 
+        {% for arbeid in arbeid_data %}
+            {% if arbeid[0] == problem[0] %}
+                {{ arbeid[1] }}
+            {% endif %}
+        {% endfor %}
+    </address>
+    <hr>
+    <p>{{ problem[3] }}</p>
 </details>
 {% endfor %}
-{%endblock%}
+{% endblock %}

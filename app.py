@@ -159,10 +159,29 @@ def dineproblemer():
         problems = c.fetchall()
         con.close()
 
+
+
+        arbeid_data = []
+        if problems:
+            con = sqlite3.connect('database.db')
+            c = con.cursor()
+            for problem in problems:
+                problem_id = problem[0]
+                c.execute("SELECT person, time FROM arbeid WHERE problem_id = ?", (problem_id,))
+                arbeid_rows = c.fetchall()
+                for arbeid_row in arbeid_rows:
+                    person = arbeid_row[0]
+                    time = arbeid_row[1]
+                    arbeid_data.append((problem_id, person, time))
+            con.close()
+            
+        print(problems[0][0])
+        print(arbeid_data[0][0])
+
         admin = session['admin']
         username = session['username']
         logged_in = session['logged_in']
-        return render_template('dineproblemer.html', username=username, admin=admin, logged_in=logged_in, problems=problems)
+        return render_template('dineproblemer.html', username=username, admin=admin, logged_in=logged_in, problems=problems, arbeid_data=arbeid_data)
 
 
 

@@ -143,6 +143,22 @@ def underarbeid():
         admin = session['admin']
         logged_in = session['logged_in']
         return render_template('underarbeid.html', username=username, admin=admin, logged_in=logged_in, under=under, time=time)
+    
+@app.route('/dineproblemer')
+def dineproblemer():
+    if 'logged_in' in session and session['logged_in']:
+        con = sqlite3.connect('database.db', check_same_thread=False, uri=True)
+        c = con.cursor()
+        c.execute("SELECT * FROM problemer WHERE helenavn = ?", (session['username'],))
+        problems = c.fetchall()
+        con.close()
+
+        admin = session['admin']
+        username = session['username']
+        logged_in = session['logged_in']
+        return render_template('dineproblemer.html', username=username, admin=admin, logged_in=logged_in, problems=problems)
+
+
 
 @app.route("/logout", methods=['POST'])
 def logout():

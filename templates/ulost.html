@@ -1,0 +1,15 @@
+{%extends "layout.html"%}
+{%block content%}
+<h3>Uløste henvendelser</h3>
+
+{% for problem in problems %}
+<details>
+	<summary>{{problem[1]}}'s henvendelse. "{{problem[6]}}"</summary>
+	<p>{{problem[3]}}</p>
+	<form action="{{ url_for('arbeid')}}" method="POST">
+		<input type="hidden" name="problem_id" value="{{ problem[0] }}">
+		<input type="submit" value="Start arbeid">
+	</form>
+</details>
+{% endfor %}
+{%endblock%}

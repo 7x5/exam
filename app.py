@@ -2,6 +2,7 @@ from flask import *
 import hashlib
 import sqlite3
 import datetime
+from datetime import timedelta
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = 'your_secret_key'
@@ -253,11 +254,65 @@ def sok():
             print(resultat)
             con.close()
             admin = session['admin']
+            username = session['username']
             logged_in = session['logged_in']
-            return render_template('sok.html', telenr=telenr, filter_option=filter_option, resultat=resultat, admin=admin, logged_in=logged_in)
+            return render_template('sok.html', telenr=telenr, filter_option=filter_option, resultat=resultat, admin=admin, logged_in=logged_in, username=username)
     else:
         return redirect(url_for('/'))
 
+from datetime import datetime
+from flask import render_template
+import sqlite3
+
+@app.route('/statistikk')
+def statistikk():
+    con = sqlite3.connect('database.db')
+    c = con.cursor()
+
+    c.execute("SELECT COUNT(*) FROM problemer")
+    totalt_antall_hendelser = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM problemer WHERE status='Uløst'")
+    antall_uloste_hendelser = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM problemer WHERE status='Under arbeid'")
+    antall_saker_under_arbeid = c.fetchone()[0]
+
+    c.execute("SELECT COUNT(*) FROM problemer WHERE status='Løst'")
+    antall_losede_saker = c.fetchone()[0]
+
+    c.execute("SELECT arbeid.fulforttime, problemer.time FROM arbeid JOIN problemer ON arbeid.problem_id = problemer.problem_id WHERE problemer.status = 'Løst';")
+    gjennomsnittforregning = c.fetchall()
+
+    c.execute("SELECT arbeid.time, problemer.time FROM arbeid  JOIN problemer ON arbeid.problem_id = problemer.problem_id  WHERE problemer.status = 'Løst' OR problemer.status =  'Under arbeid';")
+    gjennomsnittforregning2 = c.fetchall()
+
+    tidsforskjeller = []
+    for regninger in gjennomsnittforregning:
+        tid1 = datetime.strptime(regninger[0], '%Y-%m-%d %H:%M:%S.%f')
+        tid2 = datetime.strptime(regninger[1], '%Y-%m-%d %H:%M:%S.%f')
+        tidsforskjell  = tid1 - tid2
+        tidsforskjeller.append(tidsforskjell.total_seconds())
+
+    snitt_tidsforskjell = sum(tidsforskjeller) / len(tidsforskjeller)
+    snittferdig = timedelta(seconds=int(snitt_tidsforskjell))
+
+    tidsforskjeller2 = []
+    for regninger in gjennomsnittforregning2:
+        tid1 = datetime.strptime(regninger[0], '%Y-%m-%d %H:%M:%S.%f')
+        tid2 = datetime.strptime(regninger[1], '%Y-%m-%d %H:%M:%S.%f')
+        tidsforskjell2  = tid1 - tid2
+        tidsforskjeller2.append(tidsforskjell2.total_seconds())
+
+    snitt_tidsforskjell2 = sum(tidsforskjeller2) / len(tidsforskjeller2)
+    snittferdig2 = timedelta(seconds=int(snitt_tidsforskjell2))
+
+    con.close()
+
+    admin = session['admin']
+    username = session['username']
+    logged_in = session['logged_in']
+    return render_template('statistikk.html', totalt_antall_hendelser=totalt_antall_hendelser, antall_uloste_hendelser=antall_uloste_hendelser, antall_saker_under_arbeid=antall_saker_under_arbeid, antall_losede_saker=antall_losede_saker, username=username, logged_in=logged_in, admin=admin, snittferdig=snittferdig, snittferdig2=snittferdig2)
 
 
 

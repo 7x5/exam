@@ -1,0 +1,13 @@
+{%extends "layout.html"%}
+{%block content%}
+<h3>Statistikk:</h3>
+
+<p>Antall hendelser totalt: {{ totalt_antall_hendelser }}</p>
+<p>Antall hendelser med statusen som ikke er startet: {{ antall_uloste_hendelser }}</p>
+<p>Antall saker under arbeid: {{ antall_saker_under_arbeid }}</p>
+<p>Antall løste saker: {{ antall_losede_saker }}</p>
+<p>Gjennomsnittlig respons tid: {{ snittferdig2 }} </p>
+<p>Gjennomsnittlig totaltid: {{ snittferdig }}</p>
+
+
+{%endblock%}

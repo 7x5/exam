@@ -69,7 +69,7 @@ if __name__ == '__main__':
 ### Trinn 7:
 
 <ul> 
-    <li> Kjør python fila, og eventuelt fiks de probleme du fikk hvis du fikk problemer </li>
-    <li> Gå på nettleseren din å skriv inn IP-en du fikk fra trinn 4 </li>
-    <li> Voilà! Du har lagd din første Flask applikasjon </li>
+    <li> Kjør python filen, og eventuelt fiks de probleme du fikk hvis du fikk problemer. </li>
+    <li> Gå på nettleseren din å skriv inn IP-en du fikk fra trinn 4. </li>
+    <li> Voilà! Du har lagd din første Flask applikasjon. </li>
 </ul>

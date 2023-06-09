@@ -11,19 +11,21 @@
         E-post: {{ problem[7] }} <br>
         Send inn: {{ problem[4] }} <br>
         Status: <mark>{{ problem[5] }}</mark> <br>
-        Startet å jobbe på: 
-        {% for arbeid in arbeid_data %}
-            {% if arbeid[0] == problem[0] %}
-                {{ arbeid[2] }}
-            {% endif %}
-        {% endfor %}
-        <br>
-        Tekniker som jobber på den: 
-        {% for arbeid in arbeid_data %}
-            {% if arbeid[0] == problem[0] %}
-                {{ arbeid[1] }}
-            {% endif %}
-        {% endfor %}
+        {% if problem[5] == 'Under arbeid' or problem[5] == 'Løst' %}
+            Startet å jobbe på: 
+            {% for arbeid in arbeid_data %}
+                {% if arbeid[0] == problem[0] %}
+                    {{ arbeid[2] }}
+                {% endif %}
+            {% endfor %}
+            <br>
+            Tekniker som jobber på den: 
+            {% for arbeid in arbeid_data %}
+                {% if arbeid[0] == problem[0] %}
+                    {{ arbeid[1] }}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     </address>
     <hr>
     <p>{{ problem[3] }}</p>

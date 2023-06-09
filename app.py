@@ -1,8 +1,7 @@
 from flask import *
 import hashlib
 import sqlite3
-import datetime
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = 'your_secret_key'
@@ -78,7 +77,7 @@ def problemer():
 
             con = sqlite3.connect('database.db', check_same_thread=False, uri=True)
             c = con.cursor()
-            c.execute("INSERT INTO problemer (helenavn, telenr, time, body, kort_bes, status, email) VALUES (?, ?, ?, ?, ?, ?, ?)", (navn, telenr, datetime.datetime.now(), langbes, kortbes, 'Uløst', email))
+            c.execute("INSERT INTO problemer (helenavn, telenr, time, body, kort_bes, status, email) VALUES (?, ?, ?, ?, ?, ?, ?)", (navn, telenr, datetime.now(), langbes, kortbes, 'Uløst', email))
             con.commit()
             con.close()
         username = session['username']
@@ -112,7 +111,7 @@ def arbeid():
 
         con = sqlite3.connect('database.db', check_same_thread=True, uri=True)
         c = con.cursor()
-        c.execute("INSERT INTO arbeid (problem_id, person, time) VALUES (?, ?, ?)", (problem_id, bruker, datetime.datetime.now()))
+        c.execute("INSERT INTO arbeid (problem_id, person, time) VALUES (?, ?, ?)", (problem_id, bruker, datetime.now()))
         c.execute("UPDATE problemer SET status = 'Under arbeid' WHERE problem_id = ?", (problem_id,))
         con.commit()
         con.close()
@@ -165,7 +164,7 @@ def fulfor():
 
         con = sqlite3.connect('database.db', check_same_thread=True, uri=True)
         c = con.cursor()
-        c.execute("UPDATE arbeid SET fulforttime = ?, losning = ? WHERE problem_id = ?", (datetime.datetime.now(), losning, problem_id))
+        c.execute("UPDATE arbeid SET fulforttime = ?, losning = ? WHERE problem_id = ?", (datetime.now(), losning, problem_id))
         c.execute("UPDATE problemer SET status = 'Løst' WHERE problem_id = ?", (problem_id,))
         con.commit()
         con.close()
@@ -203,9 +202,6 @@ def dineproblemer():
                     losning = arbeid_row[3]
                     arbeid_data.append((problem_id, person, time, fulfortime, losning))
             con.close()
-            
-        print(problems[0][0])
-        print(arbeid_data[0][0])
 
         admin = session['admin']
         username = session['username']

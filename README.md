@@ -31,7 +31,7 @@
     <li> Skriv følgende kommando for å få IP-adressen til VM-en: </li>
 </ul>
  
-´sql ip addr show ´
+`ip addr show `
 <ul>
    <li> Merk deg IP-adressen som er tildelt til den virtuelle maskinen. </li>
 </ul>
@@ -43,10 +43,11 @@
     <li> Skriv følgende kommandoer for å installere Flask og dens avhengigheter: </li> 
 </ul>
 
-´´´sql  sudo apt update 
+```sql
+    sudo apt update 
     sudo apt install python3-pip 
     sudo pip3 install flask 
-´´´
+```
 ### Trinn 6: Lag en Flask-applikasjon 
 <ul>
     <li> Opprett en ny fil med Python-kode for Flask-applikasjonen din. For eksempel kan du kalle den app.py og legge til følgende enkle Flask-kode: </li>
@@ -70,5 +71,5 @@ if __name__ == '__main__':
 <ul> 
     <li> Kjør python fila, og eventuelt fiks de probleme du fikk hvis du fikk problemer </li>
     <li> Gå på nettleseren din å skriv inn IP-en du fikk fra trinn 4 </li>
-    <li> Voilà! du har lagd din første Flask applikasjon </li>
+    <li> Voilà! Du har lagd din første Flask applikasjon </li>
 </ul>

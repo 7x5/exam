@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+{% block content %}
+<h3>Søk:</h3>
+<form action="{{ url_for('sok') }}" method="get">
+    <input type="text" name="telenr" value="{{ telenr }}" placeholder="Telenr">
+    <button type="submit">Search</button>
+</form>
+
+<form action="{{ url_for('sok') }}" method="get">
+    <input type="hidden" name="telenr" value="{{ telenr }}">
+    <button type="submit" name="filter_option" value="Uløst">Uløst</button>
+    <button type="submit" name="filter_option" value="Under arbeid">Under arbeid</button>
+    <button type="submit" name="filter_option" value="Løst">Løst</button>
+</form>
+
+{% if resultat %}
+    {% for problem in resultat %}
+    <details class="problem {{ problem[5] }}">
+        <summary>{{ problem[1] }}'s henvendelse. "{{ problem[6] }}"</summary>
+        <address>
+            Av: {{ problem[1] }} <br>
+            Telefonnr: {{ problem[2] }} <br>
+            E-post: {{ problem[7] }} <br>
+            Sendt inn: {{ problem[4] }} <br>
+            Status: <mark>{{ problem[5] }}</mark>
+            {% if problem[5] == 'Under arbeid' %}
+                {% if problem[8] %}
+                    <br>Person: {{ problem[8] }}
+                {% endif %}
+                {% if problem[9] %}
+                    <br>Tiden arbeidet starta: {{ problem[9] }}
+                {% endif %}
+            {% elif problem[5] == 'Løst' %}
+                {% if problem[8] %}
+                    <br>Person: {{ problem[8] }}
+                {% endif %}
+                {% if problem[10] %}
+                    <br>Fulforttime: {{ problem[10] }}
+                {% endif %}
+            {% endif %}
+        </address>
+        <hr>
+        <p>{{ problem[3] }}</p>
+        {% if problem[5] == 'Løst' %}
+            <hr>
+            Løsning: <br>
+            {{ problem[9] }}
+        {% endif %}
+    </details>
+    {% endfor %}
+{% endif %}
+{% endblock %}

@@ -25,6 +25,13 @@
 		<hr>
 	</address>
 	<p>{{under[3]}}</p>
+	<hr>
+	<form action="{{ url_for('fulfor')}}" method="POST">
+		<p>Hvordan den ble løst</p>
+		<input type="hidden" name="problem_id" value="{{ under[0] }}">
+		<textarea name="losning" rows="5" cols="80"></textarea>
+		<input type="submit" value="Fulfør">
+	</form>
 </details>
 {% endfor %}
 {%endblock%}

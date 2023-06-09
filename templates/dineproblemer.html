@@ -27,6 +27,22 @@
     </address>
     <hr>
     <p>{{ problem[3] }}</p>
+    {% if problem[5] == 'Løst' %}
+    <hr>
+    <p>Fulført:         
+    {% for arbeid in arbeid_data %}
+        {% if arbeid[0] == problem[0] %}
+            {{ arbeid[3] }}
+        {% endif %}
+    {% endfor %}</p>
+    <p>Løsning:
+    {% for arbeid in arbeid_data %}
+        {% if arbeid[0] == problem[0] %}
+            {{ arbeid[4] }}
+        {% endif %}
+    {% endfor %}
+    </p>
+    {% endif %}
 </details>
 {% endfor %}
 {% endblock %}

@@ -100,6 +100,8 @@ def ulost():
         admin = session['admin']
         logged_in = session['logged_in']
         return render_template('ulost.html', username=username, admin=admin, logged_in=logged_in, problems=problems)
+    else:
+        return redirect(url_for('/'))
     
 @app.route('/arbeid', methods=['POST'])
 def arbeid():
@@ -115,6 +117,8 @@ def arbeid():
         con.close()
 
         return redirect(url_for('ulost'))
+    else:
+        return redirect(url_for('/'))
     
 @app.route('/underarbeid')
 def underarbeid():
@@ -149,6 +153,28 @@ def underarbeid():
         admin = session['admin']
         logged_in = session['logged_in']
         return render_template('underarbeid.html', username=username, admin=admin, logged_in=logged_in, under=under, arbeid_data=arbeid_data)
+    else:
+        return redirect(url_for('/'))
+    
+@app.route('/fulfor', methods=['POST'])
+def fulfor():
+    if 'admin' in session and session['admin']:
+        problem_id = request.form['problem_id']
+        losning = request.form['losning']
+
+        con = sqlite3.connect('database.db', check_same_thread=True, uri=True)
+        c = con.cursor()
+        c.execute("UPDATE arbeid SET fulforttime = ?, losning = ? WHERE problem_id = ?", (datetime.datetime.now(), losning, problem_id))
+        c.execute("UPDATE problemer SET status = 'Løst' WHERE problem_id = ?", (problem_id,))
+        con.commit()
+        con.close()
+
+        return redirect(url_for('ulost'))
+    else:
+        return redirect(url_for('/'))
+
+@app.route
+
     
 @app.route('/dineproblemer')
 def dineproblemer():
@@ -167,12 +193,14 @@ def dineproblemer():
             c = con.cursor()
             for problem in problems:
                 problem_id = problem[0]
-                c.execute("SELECT person, time FROM arbeid WHERE problem_id = ?", (problem_id,))
+                c.execute("SELECT person, time, fulforttime, losning FROM arbeid WHERE problem_id = ?", (problem_id,))
                 arbeid_rows = c.fetchall()
                 for arbeid_row in arbeid_rows:
                     person = arbeid_row[0]
                     time = arbeid_row[1]
-                    arbeid_data.append((problem_id, person, time))
+                    fulfortime = arbeid_row[2]
+                    losning = arbeid_row[3]
+                    arbeid_data.append((problem_id, person, time, fulfortime, losning))
             con.close()
             
         print(problems[0][0])
@@ -182,6 +210,55 @@ def dineproblemer():
         username = session['username']
         logged_in = session['logged_in']
         return render_template('dineproblemer.html', username=username, admin=admin, logged_in=logged_in, problems=problems, arbeid_data=arbeid_data)
+
+@app.route('/sok', methods=['GET', 'POST'])
+def sok():
+    if 'admin' in session and session['admin']:
+        if request.method == 'POST':
+            con = sqlite3.connect('database.db')
+            c = con.cursor()
+            telenr = request.form['telenr']
+            filter_option = request.form.get('filter_option')
+
+            if filter_option == 'Uløst':
+                c.execute("SELECT * FROM problemer WHERE telenr=? AND status='Uløst'", (telenr,))
+            elif filter_option == 'Under arbeid':
+                c.execute("SELECT problemer.*, arbeid.person, arbeid.time FROM problemer LEFT JOIN arbeid ON problemer.problem_id = arbeid.problem_id WHERE problemer.telenr=? AND problemer.status='Under arbeid'", (telenr,))
+            elif filter_option == 'Løst':
+                c.execute("SELECT problemer.*, arbeid.person, arbeid.losning, arbeid.fulforttime FROM problemer LEFT JOIN arbeid ON problemer.problem_id = arbeid.problem_id WHERE problemer.telenr=? AND problemer.status='Løst'", (telenr,))
+            else:
+                c.execute("SELECT * FROM problemer WHERE telenr=?", (telenr,))
+
+            resultat = c.fetchall()
+            print(resultat)
+            con.close()
+            return render_template('sok.html', telenr=telenr, filter_option=filter_option, resultat=resultat)
+        else:
+            telenr = request.args.get('telenr')
+            filter_option = request.args.get('filter_option')
+
+            con = sqlite3.connect('database.db')
+            c = con.cursor()
+
+            if filter_option == 'Uløst':
+                c.execute("SELECT * FROM problemer WHERE telenr=? AND status='Uløst'", (telenr,))
+            elif filter_option == 'Under arbeid':
+                c.execute("SELECT problemer.*, arbeid.person, arbeid.time FROM problemer LEFT JOIN arbeid ON problemer.problem_id = arbeid.problem_id WHERE problemer.telenr=? AND problemer.status='Under arbeid'", (telenr,))
+            elif filter_option == 'Løst':
+                c.execute("SELECT problemer.*, arbeid.person, arbeid.losning, arbeid.fulforttime FROM problemer LEFT JOIN arbeid ON problemer.problem_id = arbeid.problem_id WHERE problemer.telenr=? AND problemer.status='Løst'", (telenr,))
+            else:
+                c.execute("SELECT * FROM problemer WHERE telenr=?", (telenr,))
+
+            resultat = c.fetchall()
+            print(resultat)
+            con.close()
+            admin = session['admin']
+            logged_in = session['logged_in']
+            return render_template('sok.html', telenr=telenr, filter_option=filter_option, resultat=resultat, admin=admin, logged_in=logged_in)
+    else:
+        return redirect(url_for('/'))
+
+
 
 
 

@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
 <h3>Søk:</h3>
-<form action="{{ url_for('sok') }}" method="get">
+<form action="{{ url_for('sok') }}" method="GET">
     <input type="text" name="telenr" value="{{ telenr }}" placeholder="Telenr">
-    <button type="submit">Search</button>
+    <button type="submit">Søk</button>
 </form>
 
-<form action="{{ url_for('sok') }}" method="get">
+<form action="{{ url_for('sok') }}" method="GET">
     <input type="hidden" name="telenr" value="{{ telenr }}">
     <button type="submit" name="filter_option" value="Uløst">Uløst</button>
     <button type="submit" name="filter_option" value="Under arbeid">Under arbeid</button>

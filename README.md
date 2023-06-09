@@ -31,9 +31,7 @@
     <li> Skriv følgende kommando for å få IP-adressen til VM-en: </li>
 </ul>
  
-´´´sql
-    ip addr show 
-´´´
+´sql ip addr show ´
 <ul>
    <li> Merk deg IP-adressen som er tildelt til den virtuelle maskinen. </li>
 </ul>
@@ -45,8 +43,7 @@
     <li> Skriv følgende kommandoer for å installere Flask og dens avhengigheter: </li> 
 </ul>
 
-´´´sql
-    sudo apt update 
+´´´sql  sudo apt update 
     sudo apt install python3-pip 
     sudo pip3 install flask 
 ´´´
